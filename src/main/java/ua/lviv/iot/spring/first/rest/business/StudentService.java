@@ -20,5 +20,9 @@ public class StudentService {
     public List<Student> findAll() {
         return studentRepository.findAll();
     }
+    
+    public List<Student> getAllByFirstName(String firstName) {
+        return studentRepository.findAllByFirstName(firstName);
+    }
 
 }
