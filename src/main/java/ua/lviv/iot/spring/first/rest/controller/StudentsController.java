@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ua.lviv.iot.spring.first.rest.business.StudentService;
@@ -29,8 +30,11 @@ public class StudentsController {
     private StudentService studentService;
 
     @GetMapping
-    public List<Student> getStudents() {
-        return studentService.findAll();
+    public List<Student> getStudents(final @RequestParam(value = "firstName", required = false) String firstName) {
+        if (firstName == null) {
+            return studentService.findAll();
+        }
+        return studentService.getAllByFirstName(firstName);
     }
 
     @GetMapping(path = "/{id}")
@@ -48,8 +52,7 @@ public class StudentsController {
 
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<Student> deleteStudent(final @PathVariable("id") Integer studentID) {
-        HttpStatus status = students.remove(studentID) == null ? HttpStatus.NOT_FOUND
-                : HttpStatus.OK;
+        HttpStatus status = students.remove(studentID) == null ? HttpStatus.NOT_FOUND : HttpStatus.OK;
         return ResponseEntity.status(status).build();
     }
 
@@ -57,9 +60,8 @@ public class StudentsController {
     public ResponseEntity<Student> updateStudent(final @PathVariable("id") Integer studentID,
             final @RequestBody Student student) {
         student.setId(studentID);
-        HttpStatus status = students.put(student.getId(), student) == null ? HttpStatus.NOT_FOUND
-                : HttpStatus.OK;
+        HttpStatus status = students.put(student.getId(), student) == null ? HttpStatus.NOT_FOUND : HttpStatus.OK;
         return ResponseEntity.status(status).build();
     }
 
-}  
+}
